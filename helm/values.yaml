@@ -1,0 +1,21 @@
+image:
+  tag: latest
+
+api:
+  template_dir: "/home/jboss"
+  consolidation_dir: "/home/jboss"
+  quarkus_oidc_auth_server_url: "https://namansoracleapps.duckdns.org/realms/template-validator"
+  quarkus_oidc_auth_client_id: "backend-service"
+  quarkus_oidc_auth_secret: "secret"
+
+ingress:
+  domain: "xlsx.duckdns.org"
+  load_balancer_ip: "192.168.0.101"
+
+requests:
+  cpu: "250m"
+  memory: "64Mi"
+
+limits:
+  cpu: "2000m"
+  memory: "1024Mi"

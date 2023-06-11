@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        name: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}-sa
+      containers:
+        - name: {{ .Release.Name }}
+          image: namanarora/xlsx-validator:{{ .Values.image.tag }}
+          env:
+            - name: QUARKUS_OIDC_AUTH_SERVER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-config
+                  key: quarkus_oidc_auth_server_url
+            - name: TEMPLATE_DIR
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-config
+                  key: template_dir
+            - name: CONSOLIDATION_DIR
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-config
+                  key: consolidation_dir
+            - name: QUARKUS_OIDC_AUTH_CLIENT_ID
+              valueFrom:
+                  secretKeyRef:
+                    name: {{ .Release.Name }}-backend-secrets
+                    key: quarkus_oidc_auth_client_id
+            - name: QUARKUS_OIDC_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-backend-secrets
+                  key: quarkus_oidc_auth_secret
+          resources:
+            requests:
+              memory: {{ .Values.requests.memory | quote }}
+              cpu: {{ .Values.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.limits.memory | quote }}
+              cpu: {{ .Values.limits.cpu | quote }}
